@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
+import './index.css'
 
-const DisplayNumbers = ({ persons, filter, setPersons }) => {
+const DisplayNumbers = ({ persons, filter, setPersons, setNotification}) => {
+  
   const removeButton = (persons, person) => {
+    console.log(persons)
     if (window.confirm(`Remove ${person.name} from phonebook?`)) {
       personService.remove(person.id)
       setPersons(persons.filter(x => x.id != person.id))
+      setNotification(
+        `Removed ${person.name}`
+      )
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     }
   }
 
@@ -16,7 +25,7 @@ const DisplayNumbers = ({ persons, filter, setPersons }) => {
       {persons.filter(person =>
         person.name.toLowerCase().includes(filter.toLowerCase()) || person.number.includes(filter))
         .map(person =>
-          <p key={person.id+person.name+person.number}> {person.name} {person.number}
+          <p key={person.id + person.name + person.number}> {person.name} {person.number}
             <button onClick={() => removeButton(persons, person)}>remove</button>
           </p>
         )}
@@ -58,27 +67,44 @@ const FilterForm = ({ formData }) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+  if (message.includes("!")){
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
+  }
+  return (
+    <div className="notification">
+      {message}
+    </div>
+  )
+}
+
+
 const App = (props) => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const handleNameChange = (event) => {
-    // console.log(event.target.value)
     setNewName(event.target.value)
   }
   const handleNumberChange = (event) => {
-    // console.log(event.target.value)
     setNewNumber(event.target.value)
   }
   const handleFilterChange = (event) => {
-    // console.log(event.target.value)
     setFilter(event.target.value)
   }
 
   const addPerson = (event) => {
-    event.preventDefault()
     const newPerson = {
       name: newName,
       number: newNumber
@@ -89,14 +115,27 @@ const App = (props) => {
       const index = persons.findIndex((person => person.id == id));
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         personService
-          .update(id,newPerson)
+          .update(id, newPerson)
           .then(returnedPerson => {
-            setPersons(filteredPersons.concat(newPerson))
+            setPersons(filteredPersons.concat(returnedPerson))
+          }).catch(error => {
+            setNotification(
+              `${newPerson.name} has already been removed!`
+            )
+            setTimeout(() => {
+              setNotification(null)
+            }, 5000)
           })
+          setNotification(
+            `Changed the number of ${newPerson.name}`
+          )
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
         setNewName('')
         setNewNumber('')
-      } 
-    }else {
+      }
+    } else {
       personService
         .create(newPerson)
         .then(returnedPerson => {
@@ -104,7 +143,14 @@ const App = (props) => {
         })
       setNewName('')
       setNewNumber('')
-    } 
+      event.preventDefault()
+      setNotification(
+        `Added ${newName}`
+      )
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
   }
 
   // Get data from the JSON server
@@ -112,7 +158,6 @@ const App = (props) => {
     personService
       .getAll()
       .then(initialData => {
-        console.log('promise fulfilled')
         setPersons(initialData)
       })
   }, [])
@@ -123,11 +168,13 @@ const App = (props) => {
 
 
   return (
+
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notification} />
       <FilterForm formData={addFilterData} />
       <AddForm formData={addFormData} />
-      <DisplayNumbers persons={persons} filter={filter} setPersons={setPersons} />
+      <DisplayNumbers persons={persons} filter={filter} setPersons={setPersons} setNotification={setNotification} />
     </div>
   )
 }
