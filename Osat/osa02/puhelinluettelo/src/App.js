@@ -1,14 +1,28 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
-const DisplayNumbers = ({ persons, filter }) => (
-  <div>
-    {persons.filter(person => 
-      person.name.toLowerCase().includes(filter.toLowerCase()) || person.number.includes(filter))
-      .map(person =>
-       <p key={person.number}>{person.name} {person.number}</p>)}
-  </div>
-)
+const DisplayNumbers = ({ persons, filter, setPersons }) => {
+  const removeButton = (persons, person) => {
+    if (window.confirm(`Remove ${person.name} from phonebook?`)) {
+      personService.remove(person.id)
+      setPersons(persons.filter(x => x.id != person.id))
+    }
+  }
+
+
+  return (
+    <div>
+      {persons.filter(person =>
+        person.name.toLowerCase().includes(filter.toLowerCase()) || person.number.includes(filter))
+        .map(person =>
+          <p key={person.id+person.name+person.number}> {person.name} {person.number}
+            <button onClick={() => removeButton(persons, person)}>remove</button>
+          </p>
+        )}
+    </div>
+  )
+}
 
 const AddForm = ({ formData }) => {
   const { addPerson, newName, newNumber, handleNameChange, handleNumberChange } = formData
@@ -45,64 +59,66 @@ const FilterForm = ({ formData }) => {
 }
 
 const App = (props) => {
-  // const [persons, setPersons] = useState([
-  //   { name: 'Arto Hellas', number: '040-123456' },
-  //   { name: 'Ada Lovelace', number: '39-44-5323523' },
-  //   { name: 'Dan Abramov', number: '12-43-234345' },
-  //   { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  // ])
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     setNewName(event.target.value)
   }
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     setNewNumber(event.target.value)
   }
   const handleFilterChange = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     setFilter(event.target.value)
   }
+
   const addPerson = (event) => {
     event.preventDefault()
-    console.log('button clicked', event.target)
-    console.log({ newName })
-    console.log({ newNumber })
     const newPerson = {
       name: newName,
       number: newNumber
     }
     if (persons.some(x => x.name == newName)) {
-      alert(`${newName} is already added to phonebook`)
-
-    } else {
-      setPersons(persons.concat(newPerson))
+      const id = persons.filter(person => person.name == newName)[0].id
+      const filteredPersons = persons.filter(person => person.name != newName)
+      const index = persons.findIndex((person => person.id == id));
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        personService
+          .update(id,newPerson)
+          .then(returnedPerson => {
+            setPersons(filteredPersons.concat(newPerson))
+          })
+        setNewName('')
+        setNewNumber('')
+      } 
+    }else {
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+        })
       setNewName('')
       setNewNumber('')
-    }
+    } 
   }
 
-  const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+  // Get data from the JSON server
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(initialData => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(initialData)
       })
-  }
-  useEffect(hook, [])
-
-  console.log('render', persons.length, 'persons')
+  }, [])
 
   const addFormData = { addPerson, newName, newNumber, handleNameChange, handleNumberChange }
   const addFilterData = { filter, handleFilterChange }
-
 
 
 
@@ -111,7 +127,7 @@ const App = (props) => {
       <h1>Phonebook</h1>
       <FilterForm formData={addFilterData} />
       <AddForm formData={addFormData} />
-      <DisplayNumbers persons={persons} filter={filter} />
+      <DisplayNumbers persons={persons} filter={filter} setPersons={setPersons} />
     </div>
   )
 }
