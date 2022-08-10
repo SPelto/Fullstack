@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const KelvinToCelsius = ({ kelvin }) => {
-  return (
-    <div>
-      {(kelvin - 273.15).toPrecision(3)}
-    </div>
-  )
-}
 const DisplayWeather = ({ country }) => {
   // Looks like there is a problem of this component trying to return before data is FileSystemDirectoryHandle, causing error.
   // as a workaround I set a default value for weather data to prevent "undefined value error"
-  const [weatherData, setWeatherData] = useState({ "coord": { "lon": 24.9355, "lat": 60.1695 }, "weather": [{ "id": 801, "main": "Clouds", "description": "few clouds", "icon": "02d" }], "base": "stations", "main": { "temp": 295.47, "feels_like": 295.12, "temp_min": 294.75, "temp_max": 296.47, "pressure": 1014, "humidity": 52 }, "visibility": 10000, "wind": { "speed": 6.69, "deg": 210 }, "clouds": { "all": 20 }, "dt": 1660140846, "sys": { "type": 2, "id": 2036194, "country": "FI", "sunrise": 1660098069, "sunset": 1660156216 }, "timezone": 10800, "id": 658225, "name": "Helsinki", "cod": 200 })
+  const [weatherData, setWeatherData] = useState({
+  "weather": [{"icon": "02d" }], 
+  "main": { "temp": "placeholder"}, 
+  "wind": { "speed": "placeholder"}
+})
   const api_key = process.env.REACT_APP_API_KEY
   const city = country.capital
   const apiCall = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${api_key}`
