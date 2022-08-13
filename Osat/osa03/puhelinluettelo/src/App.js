@@ -103,6 +103,7 @@ const App = (props) => {
   }
 
   const addPerson = (event) => {
+    event.preventDefault()
     const newPerson = {
       name: newName,
       number: newNumber
