@@ -139,13 +139,14 @@ const App = (props) => {
         .then(returnedPerson => {
           returnedPerson ? setPersons(persons.concat(returnedPerson)) : console.log("undefined returned")
         }).catch(error => {
-          setNotification(
-            `Added ${error.response.data}`
-          )
-          setTimeout(() => {
-            setNotification(null)
-          }, 5000)
+          console.log(error)
         })
+        setNotification(
+          `Added ${newPerson.name}`
+        )
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       setNewName('')
       setNewNumber('')
     }
