@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import personService from './services/persons'
 import './index.css'
 
-const DisplayNumbers = ({ persons, filter, setPersons, setNotification}) => {
-  
+const DisplayNumbers = ({ persons, filter, setPersons, setNotification }) => {
+  console.log(persons)
   const removeButton = (persons, person) => {
     console.log(persons)
     if (window.confirm(`Remove ${person.name} from phonebook?`)) {
@@ -70,7 +70,7 @@ const Notification = ({ message }) => {
   if (message === null) {
     return null
   }
-  if (message.includes("!")){
+  if (message.includes("!")) {
     return (
       <div className="error">
         {message}
@@ -124,12 +124,12 @@ const App = (props) => {
               setNotification(null)
             }, 5000)
           })
-          setNotification(
-            `Changed the number of ${newPerson.name}`
-          )
-          setTimeout(() => {
-            setNotification(null)
-          }, 5000)
+        setNotification(
+          `Changed the number of ${newPerson.name}`
+        )
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
         setNewName('')
         setNewNumber('')
       }
@@ -137,18 +137,17 @@ const App = (props) => {
       personService
         .create(newPerson)
         .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-        }).catch(error =>{
-          console.log(error.response.data)
+          returnedPerson ? setPersons(persons.concat(returnedPerson)) : console.log("undefined returned")
+        }).catch(error => {
+          setNotification(
+            `Added ${error.response.data}`
+          )
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
         })
       setNewName('')
       setNewNumber('')
-      setNotification(
-        `Added ${newName}`
-      )
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000)
     }
   }
 
