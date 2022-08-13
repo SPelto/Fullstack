@@ -7,9 +7,8 @@ const DisplayNumbers = ({ persons, filter, setPersons, setNotification}) => {
   const removeButton = (persons, person) => {
     console.log(persons)
     if (window.confirm(`Remove ${person.name} from phonebook?`)) {
-      console.log(person._id)
-      personService.remove(person.id)
-      setPersons(persons.filter(x => x.id !== person.id))
+      personService.remove(person._id)
+      setPersons(persons.filter(x => x._id !== person._id))
       setNotification(
         `Removed ${person.name}`
       )
@@ -25,7 +24,7 @@ const DisplayNumbers = ({ persons, filter, setPersons, setNotification}) => {
       {persons.filter(person =>
         person.name.toLowerCase().includes(filter.toLowerCase()) || person.number.includes(filter))
         .map(person =>
-          <p key={person.id + person.name + person.number}> {person.name} {person.number}
+          <p key={person._id + person.name + person.number}> {person.name} {person.number}
             <button onClick={() => removeButton(persons, person)}>remove</button>
           </p>
         )}
@@ -109,7 +108,7 @@ const App = (props) => {
       number: newNumber
     }
     if (persons.some(x => x.name === newName)) {
-      const id = persons.filter(person => person.name === newName)[0].id
+      const id = persons.filter(person => person.name === newName)[0]._id
       const filteredPersons = persons.filter(person => person.name !== newName)
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         personService
