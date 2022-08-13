@@ -7,6 +7,7 @@ const DisplayNumbers = ({ persons, filter, setPersons, setNotification}) => {
   const removeButton = (persons, person) => {
     console.log(persons)
     if (window.confirm(`Remove ${person.name} from phonebook?`)) {
+      console.log(person._id)
       personService.remove(person.id)
       setPersons(persons.filter(x => x.id !== person.id))
       setNotification(
