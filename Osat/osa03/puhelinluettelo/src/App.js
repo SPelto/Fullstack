@@ -138,10 +138,11 @@ const App = (props) => {
         .create(newPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+        }).catch(error =>{
+          console.log(error.response.data)
         })
       setNewName('')
       setNewNumber('')
-      event.preventDefault()
       setNotification(
         `Added ${newName}`
       )
