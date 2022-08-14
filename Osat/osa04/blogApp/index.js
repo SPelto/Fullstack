@@ -1,6 +1,6 @@
 const config = require('./utils/config')
 const express = require('express')
-const app = express()
+const app = require('./app')
 const http = require('http')
 const logger = require('./utils/logger')
 const cors = require('cors')
