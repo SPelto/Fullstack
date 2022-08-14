@@ -115,7 +115,7 @@ const App = (props) => {
         personService
           .update(id, newPerson)
           .then(returnedPerson => {
-            setPersons(filteredPersons.concat(returnedPerson))
+            returnedPerson ? setPersons(filteredPersons.concat(returnedPerson)) : console.log("undefined returned")
           }).catch(error => {
             setNotification(
               `${newPerson.name} has already been removed!`
