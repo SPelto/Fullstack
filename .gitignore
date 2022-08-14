@@ -1,3 +1,4 @@
+*.jar
 notes
 node_modules
 .env*
