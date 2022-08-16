@@ -37,7 +37,11 @@ const mostLikedBlog = (blogs) => {
 
 const mostBlogs = (blogs) => {
   const authorBlogs = blogs.map(blog => blog.author).sort()
-  const authorCounts = authorBlogs.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map());
+  const authorCounts = authorBlogs
+    .reduce((acc, e) =>
+      acc.set(e, (acc.get(e) || 0) + 1),
+      new Map());
+
   const l = Array.from(authorCounts.entries())
   const author = l.reduce((prev, current) => (
     prev[1] > current[1] ? prev : current
@@ -46,8 +50,7 @@ const mostBlogs = (blogs) => {
     {
       author: author[0],
       blogs: author[1]
-    }
-  )
+    })
 }
 const mostLikedAuthor = (blogs) => {
   uniqueAuthors = [...new Set(blogs.map(blog => blog.author))];
