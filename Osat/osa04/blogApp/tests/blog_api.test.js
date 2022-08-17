@@ -2,45 +2,20 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-
+const helper = require('./test_helper')
 const api = supertest(app)
 
-const initialBlogs = [
-  {
-    "title": "How to Mongo",
-    "author": "Maarto Pellas",
-    "url": "www.url.com",
-    "likes": "3"
-  },
-  {
-    "title": "React patterns",
-    "author": "Michael Chan",
-    "url": "https://reactpatterns.com/",
-    "likes": "7"
-  },
-  {
-    "title": "Go To Statement Considered Harmful",
-    "author": "Edsger W. Dijkstra",
-    "url": "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    "likes": "5"
-  },
-  {
-    "title": "Type wars",
-    "author": "Robert C. Martin",
-    "url": "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    "likes": "2"
-  }
-]
+
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(initialBlogs[0])
+  let blogObject = new Blog(helper.initialBlogs[0])
   await blogObject.save()
-  blogObject = new Blog(initialBlogs[1])
+  blogObject = new Blog(helper.initialBlogs[1])
   await blogObject.save()
-  blogObject = new Blog(initialBlogs[2])
+  blogObject = new Blog(helper.initialBlogs[2])
   await blogObject.save()
-  blogObject = new Blog(initialBlogs[3])
+  blogObject = new Blog(helper.initialBlogs[3])
   await blogObject.save()
 })
 
@@ -61,7 +36,7 @@ test('blogs can be added to database', async () => {
     "title": "Added blog",
     "author": "Unnamed author",
     "url": "http://www.testsdonthaveurls.com",
-    "likes": "5"
+    "likes": "609"
   }
   await api
     .post('/api/blogs')
@@ -72,7 +47,7 @@ test('blogs can be added to database', async () => {
   const response = await api.get('/api/blogs')
   const contents = response.body.map(blog => blog.title)
 
-  expect(response.body).toHaveLength(initialBlogs.length + 1)
+  expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
   expect(contents).toContain('Added blog')
 })
 
@@ -107,6 +82,43 @@ test('blogs use initial value=0 for likes', async () => {
       blog.likes)
 
   expect(contents).toContain(0)
+})
+
+test('blogs can be deleted', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(
+    helper.initialBlogs.length - 1
+    )
+    const titles = blogsAtEnd.map(blog => blog.title)
+    expect(titles).not.toContain(blogToDelete.title)
+})
+
+test('blogs can be modified', async () => {
+
+  const newLikeAmount = 609
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToModify = blogsAtStart[0]
+  const updatedBlog = {... blogToModify, likes: newLikeAmount}
+
+  await api
+    .put(`/api/blogs/${blogToModify.id}`)
+    .send(updatedBlog)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(
+    helper.initialBlogs.length
+    )
+    const newLikes = blogsAtEnd
+    .filter(blog => blog.id === blogToModify.id)
+    .map(blog => blog.likes)
+    expect(200)
+    expect(newLikes).toContain(newLikeAmount)
 })
 
 afterAll(() => {
