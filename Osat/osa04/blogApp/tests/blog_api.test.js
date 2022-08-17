@@ -7,13 +7,22 @@ const helper = require('./test_helper')
 const api = supertest(app)
 const bcrypt = require('bcrypt')
 
-
+let token;
 
 beforeEach(async () => {
   await User.deleteMany({})
-  const passwordHash = await bcrypt.hash('sekret', 10)
+  const password = 'sekret'
+  const passwordHash = await bcrypt.hash(password, 10)
   const user = new User({ username: 'root', passwordHash })
   await user.save()
+
+  const response = await api.post('/api/login').send(
+    {
+      username: user.username,
+      password: password
+    }
+  )
+  token = response.body.token
 
   await Blog.deleteMany({})
   let blogObject = new Blog(helper.initialBlogs[0])
@@ -48,6 +57,7 @@ test('blogs can be added to database', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', 'bearer ' + token)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -101,9 +111,9 @@ test('blogs can be deleted', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(
     helper.initialBlogs.length - 1
-    )
-    const titles = blogsAtEnd.map(blog => blog.title)
-    expect(titles).not.toContain(blogToDelete.title)
+  )
+  const titles = blogsAtEnd.map(blog => blog.title)
+  expect(titles).not.toContain(blogToDelete.title)
 })
 
 test('blogs can be modified', async () => {
@@ -111,7 +121,7 @@ test('blogs can be modified', async () => {
   const newLikeAmount = 609
   const blogsAtStart = await helper.blogsInDb()
   const blogToModify = blogsAtStart[0]
-  const updatedBlog = {... blogToModify, likes: newLikeAmount}
+  const updatedBlog = { ...blogToModify, likes: newLikeAmount }
 
   await api
     .put(`/api/blogs/${blogToModify.id}`)
@@ -120,12 +130,12 @@ test('blogs can be modified', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(
     helper.initialBlogs.length
-    )
-    const newLikes = blogsAtEnd
+  )
+  const newLikes = blogsAtEnd
     .filter(blog => blog.id === blogToModify.id)
     .map(blog => blog.likes)
-    expect(200)
-    expect(newLikes).toContain(newLikeAmount)
+  expect(200)
+  expect(newLikes).toContain(newLikeAmount)
 })
 
 afterAll(() => {

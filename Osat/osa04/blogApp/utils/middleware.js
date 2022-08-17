@@ -30,11 +30,12 @@ const errorHandler = (error, request, response, next) => {
 
 const getTokenFrom = (request, response, next) => {
   const authorization = request.get('authorization')
-  if (!(authorization && authorization.toLowerCase().startsWith('bearer '))) {
-    return response.status(401).send("Access denied, invalid token")
-  } else {
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     const tokenBody = authorization.substring(7)
     request['token'] = tokenBody
+    next()
+  } else {
+    request['token'] = null
     next()
   }
 }
