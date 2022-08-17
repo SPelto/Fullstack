@@ -1,0 +1,10 @@
+post http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MmZkM2Y3NjUzYzkyNTRlM2FhYzczNDIiLCJpYXQiOjE2NjA3NjQ4MDN9.UJoCDWiD8IDBxU3oiXP_pwRJLndtTrAMV_RjmivEGb4
+
+{
+  "title": "Rest works",
+  "likes": "0",
+  "url": "www.hs.fi",
+  "author": "mluukkai"
+}
