@@ -1,4 +1,4 @@
-delete http://localhost:3003/api/blogs/62fd4d493616ef65a80c9f38
+delete http://localhost:3003/api/blogs/{ADD_ID}
 Content-Type: application/json
 
 # mluukkai
