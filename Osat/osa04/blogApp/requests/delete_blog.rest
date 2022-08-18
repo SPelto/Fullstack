@@ -1,0 +1,8 @@
+delete http://localhost:3003/api/blogs/62fd4d493616ef65a80c9f38
+Content-Type: application/json
+
+# mluukkai
+# Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MmZkM2Y3NjUzYzkyNTRlM2FhYzczNDIiLCJpYXQiOjE2NjA3NjQ4MDN9.UJoCDWiD8IDBxU3oiXP_pwRJLndtTrAMV_RjmivEGb4
+
+# root
+# Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyZmQyZjkzMjg5ZGIwNjQ5OGFiNjE3YSIsImlhdCI6MTY2MDgzNTY5OH0.XaZjKXfrZiR1K-dPi30ot3xOwmvJiBlndTHLajT8SGc
