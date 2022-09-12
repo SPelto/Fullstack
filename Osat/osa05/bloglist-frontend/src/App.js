@@ -65,7 +65,8 @@ const App = () => {
         blogs={blogs}
         setBlogs={setBlogs}/>
         <h2>blogs</h2>
-        <Blogs blogs={blogs} />
+        <Blogs blogs={blogs} 
+        setBlogs={setBlogs}/>
       </div>
     )
   }

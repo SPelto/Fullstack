@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, blogs, setBlogs }) => {
   const [currBlog, setcurrBlog] = useState(blog)
   const [details, setDetails] = useState(false)
 
@@ -29,8 +29,10 @@ const Blog = ({ blog }) => {
     console.log("Remove button clicked")
     if (window.confirm("Do you want to remove the blog?")) {
       try {
-        const response = await blogService.remove(currBlog)
-        console.log(response)
+        await blogService.remove(currBlog)
+        const updatedBlogs = blogs.filter(blog => blog.id !== currBlog.id)
+        console.log(updatedBlogs)
+        setBlogs(updatedBlogs)
         setcurrBlog(null)
       } catch (exception) {
         console.log(exception)
