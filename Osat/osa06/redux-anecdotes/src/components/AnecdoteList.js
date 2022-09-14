@@ -11,25 +11,26 @@ const anecdoteStyle = {
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
-  const anecdotes = useSelector(state => state).sort((a,b) => b.votes - a.votes)
-
+  const anecdotes = [...useSelector(state => state.anecdotes)].sort((a, b) => b.votes - a.votes)
   const vote = (id) => {
     dispatch(voteAnecdote(id))
   }
 
   return (
-  <div>
-      {anecdotes.map(anecdote =>
-        <div key={anecdote.id} style={anecdoteStyle}>
-          <div>
-            {anecdote.content}
+    <div>
+      {anecdotes
+        .map(anecdote =>
+          <div key={anecdote.id} style={anecdoteStyle}>
+            <div>
+              {anecdote.content}
+            </div>
+            <div>
+              has {anecdote.votes}
+              <button onClick={() => vote(anecdote.id)}>vote</button>
+            </div>
           </div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
-          </div>
-        </div>
-      )}
-  </div>
-)}
+        )}
+    </div>
+  )
+}
 export default AnecdoteList
