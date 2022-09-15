@@ -1,8 +1,7 @@
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 // import notificationReducer, { notification } from '../reducers/notificationReducer'
 
 const Notification = () => {
-  // const dispatch = useDispatch()
   const notification = useSelector(state => state.notification)
 
   const style = {
