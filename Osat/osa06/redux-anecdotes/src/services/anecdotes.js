@@ -7,9 +7,10 @@ const getAll = async () => {
   return response.data
 }
 
-const addAnecdote = async (request) => {
-  const response = await axios.post(baseUrl, request)
-  return response
+const addAnecdote = async (content) => {
+  console.log(content)
+  const response = await axios.post(baseUrl, content)
+  return response.data
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

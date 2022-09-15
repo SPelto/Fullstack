@@ -24,7 +24,6 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
   const anecdotes = [...useSelector(state => state.anecdotes)].sort((a, b) => b.votes - a.votes)
   const filterValue = useSelector(state => state.filter)
-  
   const vote = (id) => {
     dispatch(voteAnecdote(id))
     messageUpdate(dispatch, id, anecdotes)
