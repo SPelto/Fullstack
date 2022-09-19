@@ -14,7 +14,7 @@ const testToken = async (token) => {
 }
 blogsRouter.get('/', async (request, response, next) => {
   try {
-    const blogs = await Blog.find({}).populate('user', {username: 1})
+    const blogs = await Blog.find({}).populate('user', { username: 1 })
     response.json(blogs)
   } catch (exception) {
     next(exception)
@@ -35,14 +35,14 @@ blogsRouter.post('/', async (request, response, next) => {
     const user = await testToken(request.token)
     const blog = new Blog(request.body)
 
-    const blogWithUser = new Blog ({
+    const blogWithUser = new Blog({
       title: blog.title,
       author: blog.author,
       likes: blog.likes,
       url: blog.url,
       user: user._id
     })
-    
+
     const savedBlog = await blogWithUser.save()
 
     user.blogs = user.blogs.concat(savedBlog._id)
@@ -65,15 +65,15 @@ blogsRouter.put('/:id', async (request, response, next) => {
 })
 
 blogsRouter.delete('/:id', async (request, response, next) => {
-
   try {
     const blog = await Blog.findById(request.params.id)
     const user = await testToken(request.token)
     if (!(user.id === blog.user.toString())) {
-      response.status(401).json({ error: 'Blog can only be extinguished if thou has created it'}).end()
+      response.status(401).json({ error: 'Blog can only be extinguished if thou has created it' }).end()
+    } else {
+      await Blog.deleteOne({ _id: request.params.id })
+      response.status(204).end()
     }
-    await Blog.deleteOne({ _id: request.params.id })
-    response.status(204).end()
   } catch (exception) {
     next(exception)
   }
