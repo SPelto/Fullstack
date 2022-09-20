@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 import Blogs from './components/Blogs'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import Logout from './components/Logout'
 import CreateForm from './components/CreateForm'
-import { useDispatch } from 'react-redux'
+import loginService from './services/login'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification } from './reducers/notificationReducer'
 import { initializeBlogs } from './reducers/blogReducer'
+import { login, setCredentials, test, selectToken, selectUser } from './reducers/userReducer'
+import loginUser from './reducers/userReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -17,17 +19,20 @@ const App = () => {
   const [user, setUser] = useState(null)
   const dispatch = useDispatch()
 
+  console.log("TESTING", dispatch(test()))
 
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
 
-
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON).data || JSON.parse(loggedUserJSON) // Cypress assigns without "data" so conditional variable assignment is needed
+      console.log("Loading stored user", user)
       blogService.setToken(user.token)
+      dispatch(setCredentials(user))
+      console.log(user)
       setUser(user)
     }
   }, [])
@@ -35,16 +40,20 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with', username, password)
-
     try {
+      dispatch(login({
+        username, password,
+      }))
       const user = await loginService.login({
         username, password,
       })
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
+
+
       blogService.setToken(user.data.token)
-      console.log(user.data)
+
       setUser(user)
       setUsername('')
       setPassword('')

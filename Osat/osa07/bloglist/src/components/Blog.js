@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { removeBlog, increaseLikes } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
 const Blog = ({ blog }) => {
-  const [currBlog, setcurrBlog] = useState(blog)
-  const [details, setDetails] = useState(false)
+  const [currBlog, setcurrBlog] = useState(blog) // This part is here to force re-rendering when blogs are deleted or modified
+  const [details, setDetails] = useState(false) // This controls if the details of the blog is shown
+  // Could these be efficiently handled with reducers?
+
   const dispatch = useDispatch()
   const blogStyle = {
     paddingTop: 10,
@@ -34,7 +36,9 @@ const Blog = ({ blog }) => {
     }
   }
 
+  // If currBlog is set to null (happens when deleted) the component returns nothing
   if (currBlog) {
+
     if (!details) {
       return (
         <div className='blog'>
@@ -53,6 +57,7 @@ const Blog = ({ blog }) => {
         </div>
       )
     }
+
   }
 }
 
