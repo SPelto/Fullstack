@@ -1,12 +1,11 @@
-import { useField, useReset } from "../hooks"
+import { useField } from "../hooks"
 
 const CreateNew = (props) => {
-  const {reset:contentReset, ...content} = useField('content')
-  const {reset:authorReset, ...author} = useField('author')
-  const {reset:infoReset, ...info} = useField('info')  
+  const { reset: contentReset, ...content } = useField('content')
+  const { reset: authorReset, ...author } = useField('author')
+  const { reset: infoReset, ...info } = useField('info')
 
   const handleSubmit = (e) => {
-    console.log("SUBMIIIIIIT")
     e.preventDefault()
     console.log(content.value)
     props.addNew({
@@ -21,8 +20,8 @@ const CreateNew = (props) => {
     contentReset()
     authorReset()
     infoReset()
-    }
-  
+  }
+
 
   return (
     <div>
@@ -30,15 +29,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {... content} />
+          <input {...content} />
         </div>
         <div>
           author
-          <input {... author}/>
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input {... info}/>
+          <input {...info} />
         </div>
         <button>create</button>
         <button type="Button" onClick={handleReset}> reset </button>
